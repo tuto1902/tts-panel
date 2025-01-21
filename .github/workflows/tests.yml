@@ -41,6 +41,32 @@ jobs:
       - name: Install PHP dependencies
         run: composer install --no-interaction --no-progress --ansi
 
+      - name: Set up Node & NPM
+        uses: actions/setup-node@v2
+        with:
+          node-version: '21.x'
+
+      - name: Get NPM cache directory
+        id: npm-cache-dir
+        shell: bash
+        run: echo "dir=$(npm config get cache)" >> ${GITHUB_OUTPUT}
+
+      - name: Cache dependencies
+        id: npm-cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.npm-cache-dir.outputs.dir }}
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm install
+
+      - name: Build dependencies
+        run: npm run build
+
       - name: Prepare Laravel
         run: |
           cp .env.example .env
