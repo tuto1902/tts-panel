@@ -71,14 +71,15 @@ jobs:
         run: |
           cp .env.example .env
           php artisan key:generate
-          - name: Install Aspell
-          shell: bash
-          run: |
-              if [[ "$RUNNER_OS" == "Linux" ]]; then
+
+      - name: Install Aspell
+        shell: bash
+        run: |
+            if [[ "$RUNNER_OS" == "Linux" ]]; then
                 sudo apt-get update && sudo apt-get install -y aspell aspell-en
-              elif [[ "$RUNNER_OS" == "macOS" ]]; then
+            elif [[ "$RUNNER_OS" == "macOS" ]]; then
                 brew install aspell
-              fi
+            fi
 
       - name: Check Typos
         shell: bash
