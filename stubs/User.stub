@@ -1,0 +1,11 @@
+<?php
+
+namespace App\Models;
+
+class User
+{
+    /**
+     * @var array<string>
+     */
+    protected $fillable = [];
+}
