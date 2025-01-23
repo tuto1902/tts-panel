@@ -68,8 +68,9 @@ final class TwitchController extends Controller
                     return response('Invalid notification type', 400);
                 }
                 $message = $request->get('event')['user_input'];
-                // TwitchEventReceived::dispatch($message);
-                event(new TwitchEventReceived(message: $message));
+                $accountId = (int) $request->get('event')['user_id'];
+
+                event(new TwitchEventReceived(account_id: $accountId, message: $message));
 
                 return response(null, 204);
             default:

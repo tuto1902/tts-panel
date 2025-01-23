@@ -15,6 +15,8 @@ final class TwitchEvent extends Model
     protected $fillable = [
         'message',
         'file_path',
+        'nickname',
+        'avatar',
     ];
 
     /**

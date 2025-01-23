@@ -17,7 +17,8 @@ final class TwitchEventReceived
      * Create a new event instance.
      */
     public function __construct(
-        public string $message
+        public string $message,
+        public int $account_id
     ) {}
 
     /**

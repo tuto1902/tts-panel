@@ -21,7 +21,9 @@ it('shows the event message', function (): void {
     $event = TwitchEvent::factory()->create();
 
     Livewire::actingAs($this->user)->test(TwitchEventCard::class, ['event' => $event])
-        ->assertSee($event->message);
+        ->assertSee($event->message)
+        ->assertSee($event->nickname)
+        ->assertSee($event->avatar);
 });
 
 it('updates the event played at column', function (): void {

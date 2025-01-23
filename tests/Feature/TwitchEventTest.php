@@ -57,8 +57,9 @@ it('creates a tts record in the database when the twitch event is handled', func
     $message = 'Event message';
 
     setupOpenAIRequest();
+    $account_id = setupTwitchUserRequest();
 
-    $twitchEvent = new TwitchEventReceived(message: $message);
+    $twitchEvent = new TwitchEventReceived(account_id: $account_id, message: $message);
     $twitchEventListener = new TwitchEventListener;
     $twitchEventListener->handle($twitchEvent);
 
@@ -67,6 +68,24 @@ it('creates a tts record in the database when the twitch event is handled', func
         'id' => 1,
         'message' => $message,
     ]);
+});
+
+it('requests user display name and avatar from Twitch', function (): void {
+    setupOpenAIRequest();
+    $account_id = setupTwitchUserRequest();
+
+    $message = 'Event message';
+
+    $twitchEvent = new TwitchEventReceived(account_id: $account_id, message: $message);
+    $twitchEventListener = new TwitchEventListener;
+    $twitchEventListener->handle($twitchEvent);
+
+    assertDatabaseHas('twitch_events', [
+        'id' => 1,
+        'nickname' => 'TwitchUser',
+        'avatar' => 'profile_image.png',
+    ]);
+
 });
 
 // it('creates a new audio file using OpenAI tts API', function () {

@@ -9,9 +9,9 @@
 
     <x-slot name="content">
         <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">
-            @if ($this->verificationPending)
+            @if ($isVerificationPending)
                 {{ __('The event subscription needs to be verified first.') }}
-            @elseif($this->enabled)
+            @elseif($isEnabled)
                 {{ __('You are subscribed to Twitch events.') }}
             @else
                 {{ __('You have not subscribed to any Twitch events.') }}
@@ -25,7 +25,11 @@
         </div>
 
         <div class="mt-5">
-            @if (!$this->enabled && !$this->verificationPending)
+            @if (!$isEnabled && $isVerificationPending)
+                <div wire:poll></div>
+            @endif
+
+            @if (!$isEnabled && !$isVerificationPending)
                 <x-confirms-password wire:then="enableTwitchEventSubscription">
                     <x-button type="button" wire:loading.attr="disabled" data-test-connect>
                         {{ __('Subscribe') }}
