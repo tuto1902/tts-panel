@@ -9,15 +9,32 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\View\View;
 use Laravel\Jetstream\ConfirmsPasswords;
-use Livewire\Attributes\Computed;
 use Livewire\Component;
 
 final class TwitchEventSubscriptionForm extends Component
 {
     use ConfirmsPasswords;
 
+    public bool $isVerificationPending = false;
+
+    public bool $isEnabled = false;
+
+    public function mount(): void
+    {
+        /** @var \App\Models\TwitchAccount $twitchAccount */
+        $twitchAccount = Auth::user()->twitch;
+
+        $this->isVerificationPending = $twitchAccount->status === 'webhook_callback_verification_pending';
+        $this->isEnabled = $twitchAccount->status === 'enabled';
+    }
+
     public function render(): View
     {
+        /** @var \App\Models\TwitchAccount $twitchAccount */
+        $twitchAccount = Auth::user()->twitch;
+
+        $this->isEnabled = $twitchAccount->status === 'enabled';
+
         return view('profile.twitch-event-subscription-form');
     }
 
@@ -36,30 +53,14 @@ final class TwitchEventSubscriptionForm extends Component
             ->post('https://api.twitch.tv/helix/eventsub/subscriptions', $payload);
 
         if ($response->failed()) {
-            throw new Exception('event subscription failed');
+            throw new Exception('event subscription failed: '.$response->body());
         }
 
         Auth::user()->twitch()->update([
             'status' => $response->json('data')[0]['status'],
         ]);
-    }
 
-    #[Computed]
-    public function enabled(): bool
-    {
-        /** @var \App\Models\TwitchAccount $twitchAccount */
-        $twitchAccount = Auth::user()->twitch;
-
-        return $twitchAccount->status === 'enabled';
-    }
-
-    #[Computed]
-    public function verificationPending(): bool
-    {
-        /** @var \App\Models\TwitchAccount $twitchAccount */
-        $twitchAccount = Auth::user()->twitch;
-
-        return $twitchAccount->status === 'webhook_callback_verification_pending';
+        $this->isVerificationPending = $response->json('data')[0]['status'] === 'webhook_callback_verification_pending';
     }
 
     protected function getAccessToken(): string

@@ -21,6 +21,8 @@ final class TwitchEventFactory extends Factory
         return [
             'message' => fake()->sentence(),
             'file_path' => fake()->filePath(),
+            'nickname' => fake()->name(),
+            'avatar' => 'avatar.png',
         ];
     }
 }

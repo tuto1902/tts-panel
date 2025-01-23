@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Models\TwitchAccount;
+use App\Models\User;
+
 /*
 |--------------------------------------------------------------------------
 | Test Case
@@ -57,4 +60,25 @@ function setupOpenAIRequest()
     ]);
     // Fake events
     Event::fake();
+}
+
+function setupTwitchUserRequest(): int
+{
+    $user = User::factory()->create();
+    $account = TwitchAccount::factory()->for($user)->create();
+
+    $response = [
+        'data' => [
+            [
+                'display_name' => 'TwitchUser',
+                'profile_image_url' => 'profile_image.png',
+            ],
+        ],
+    ];
+    Http::fake([
+        // Stub a JSON response for Twitch endpoint...
+        'https://api.twitch.tv/*' => Http::response($response, 200),
+    ]);
+
+    return $account->id;
 }
