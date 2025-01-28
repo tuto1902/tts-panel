@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Events\TwitchEventReceived;
+use App\Events\TwitchAccountUpdated;
 use App\Models\TwitchAccount;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -61,6 +61,7 @@ final class TwitchController extends Controller
                 $twitchAccount = TwitchAccount::where('account_id', $accountId)->first();
                 $twitchAccount->status = 'enabled';
                 $twitchAccount->save();
+                broadcast(new TwitchAccountUpdated());
 
                 return response($challenge, 200, ['Content-Type' => 'text/plain']);
             case 'notification':
@@ -69,8 +70,6 @@ final class TwitchController extends Controller
                 }
                 $message = $request->get('event')['user_input'];
                 $accountId = (int) $request->get('event')['user_id'];
-
-                event(new TwitchEventReceived(account_id: $accountId, message: $message));
 
                 return response(null, 204);
             default:

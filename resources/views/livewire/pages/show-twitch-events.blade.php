@@ -6,7 +6,7 @@
 </x-slot>
 
 <div class="py-12">
-    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6" wire:poll>
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
     @foreach ($this->events as $event)
         <livewire:twitch-event-card wire:key="{{ $event->id }}" :event="$event" />
     @endforeach

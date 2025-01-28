@@ -6,7 +6,6 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
 final class TwitchValidationMiddleware
@@ -42,7 +41,6 @@ final class TwitchValidationMiddleware
     {
         $message = $messageId.$timestamp.$body;
         $hash = 'sha256='.hash_hmac('sha256', $message, $secret);
-        Log::info($hash);
 
         return hash_equals($hash, $signature);
     }
