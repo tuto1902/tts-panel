@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Listeners;
 
+use App\Events\TwitchEventCreated;
 use App\Events\TwitchEventReceived;
 use App\Models\TwitchEvent;
 use Exception;
@@ -61,5 +62,6 @@ final class TwitchEventListener implements ShouldQueue
             'nickname' => $data['data'][0]['display_name'],
             'avatar' => $data['data'][0]['profile_image_url'],
         ]);
+        broadcast(new TwitchEventCreated);
     }
 }

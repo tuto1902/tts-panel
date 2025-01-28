@@ -28,6 +28,16 @@ final class TwitchEventSubscriptionForm extends Component
         $this->isEnabled = $twitchAccount->status === 'enabled';
     }
 
+    public function getListeners(): array
+    {
+        return [
+            // Private Channel
+            'echo-private:account.updated,TwitchAccountUpdated' => 'onTwitchAccountUpdated',
+        ];
+    }
+
+    public function onTwitchAccountUpdated(): void {}
+
     public function render(): View
     {
         /** @var \App\Models\TwitchAccount $twitchAccount */
