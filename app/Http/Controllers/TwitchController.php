@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Http\Controllers;
 
 use App\Events\TwitchAccountUpdated;
+use App\Events\TwitchEventReceived;
 use App\Models\TwitchAccount;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -70,6 +71,8 @@ final class TwitchController extends Controller
                 }
                 $message = $request->get('event')['user_input'];
                 $accountId = (int) $request->get('event')['user_id'];
+
+                event(new TwitchEventReceived(account_id: $accountId, message: $message));
 
                 return response(null, 204);
             default:
