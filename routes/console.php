@@ -10,11 +10,7 @@ use Illuminate\Support\Facades\Http;
 use function Laravel\Prompts\spin;
 use function Laravel\Prompts\table;
 
-Artisan::command('inspire', function () {
-    $this->comment(Inspiring::quote());
-})->purpose('Display an inspiring quote')->hourly();
-
-Artisan::command('twitch:event', function () {
+Artisan::command('twitch:event', function (): void {
     $quote = Inspiring::quotes()->random();
 
     broadcast(
@@ -22,7 +18,7 @@ Artisan::command('twitch:event', function () {
     );
 });
 
-Artisan::command('twitch:status', function () {
+Artisan::command('twitch:status', function (): void {
     $response = spin(
         message: 'Fetching new access token...',
         callback: fn () => Http::post('https://id.twitch.tv/oauth2/token', [
