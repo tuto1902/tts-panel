@@ -82,27 +82,27 @@ final class TwitchController extends Controller
         }
     }
 
-    public function clip(Request $request)
+    public function clip(Request $request): void
     {
+        /** @var TwitchAccount $twitchAccount */
         $twitchAccount = Auth::user()->twitch;
         $response = Http::withToken($twitchAccount->access_token)
             ->withHeaders(['Client-Id' => config('services.twitch.client_id')])
             ->post('https://api.twitch.tv/helix/clips', [
-                'broadcaster_id' => $twitchAccount->account_id
+                'broadcaster_id' => $twitchAccount->account_id,
             ]);
 
         Log::info($response->body());
 
-        if ($response->status() == 401) {
+        if ($response->status() === 401) {
             // Refresh the access token
             $payload = [
                 'client_id' => config('services.twitch.client_id'),
                 'client_secret' => config('services.twitch.client_secret'),
                 'grant_type' => 'refresh_token',
-                'refresh_token' => $twitchAccount->refresh_token
+                'refresh_token' => $twitchAccount->refresh_token,
             ];
             $response = Http::asForm()->post('https://id.twitch.tv/oauth2/token', $payload);
-
 
             if ($response->successful()) {
                 $twitchAccount->access_token = $response->json('access_token');
@@ -112,7 +112,7 @@ final class TwitchController extends Controller
                 $response = Http::withToken($twitchAccount->access_token)
                     ->withHeaders(['Client-Id' => config('services.twitch.client_id')])
                     ->post('https://api.twitch.tv/helix/clips', [
-                        'broadcaster_id' => $twitchAccount->account_id
+                        'broadcaster_id' => $twitchAccount->account_id,
                     ]);
             }
         }
