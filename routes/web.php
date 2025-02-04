@@ -11,6 +11,7 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+
 Route::post('/twitch/event', [TwitchController::class, 'event'])->name('twitch.event')->middleware(TwitchValidationMiddleware::class);
 
 Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified'])->group(function (): void {
@@ -24,4 +25,5 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 
     Route::get('/events', ShowTwitchEvents::class)->name('events.index');
 
+    Route::get('/clip', [TwitchController::class, 'clip']);
 });
