@@ -24,4 +24,5 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 
     Route::get('/events', ShowTwitchEvents::class)->name('events.index');
 
+    Route::get('/clip', [TwitchController::class, 'clip']);
 });

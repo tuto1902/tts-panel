@@ -11,6 +11,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Laravel\Socialite\Facades\Socialite;
 
 final class TwitchController extends Controller
@@ -19,7 +21,7 @@ final class TwitchController extends Controller
     {
         // @phpstan-ignore method.notFound
         return Socialite::driver('twitch')
-            ->scopes(['channel:read:redemptions'])
+            ->scopes(['channel:read:redemptions', 'clips:edit'])
             ->redirect();
     }
 
@@ -77,6 +79,42 @@ final class TwitchController extends Controller
                 return response(null, 204);
             default:
                 return response('Missing message type header', 400);
+        }
+    }
+
+    public function clip(Request $request): void
+    {
+        /** @var TwitchAccount $twitchAccount */
+        $twitchAccount = Auth::user()->twitch;
+        $response = Http::withToken($twitchAccount->access_token)
+            ->withHeaders(['Client-Id' => config('services.twitch.client_id')])
+            ->post('https://api.twitch.tv/helix/clips', [
+                'broadcaster_id' => $twitchAccount->account_id,
+            ]);
+
+        Log::info($response->body());
+
+        if ($response->status() === 401) {
+            // Refresh the access token
+            $payload = [
+                'client_id' => config('services.twitch.client_id'),
+                'client_secret' => config('services.twitch.client_secret'),
+                'grant_type' => 'refresh_token',
+                'refresh_token' => $twitchAccount->refresh_token,
+            ];
+            $response = Http::asForm()->post('https://id.twitch.tv/oauth2/token', $payload);
+
+            if ($response->successful()) {
+                $twitchAccount->access_token = $response->json('access_token');
+                $twitchAccount->refresh_token = $response->json('refresh_token');
+                $twitchAccount->save();
+                // retry the clip request
+                $response = Http::withToken($twitchAccount->access_token)
+                    ->withHeaders(['Client-Id' => config('services.twitch.client_id')])
+                    ->post('https://api.twitch.tv/helix/clips', [
+                        'broadcaster_id' => $twitchAccount->account_id,
+                    ]);
+            }
         }
     }
 }
