@@ -14,15 +14,6 @@ use Livewire\Component;
 
 final class ShowTwitchEvents extends Component
 {
-    // public $twitchAccountId;
-
-    // public function mount()
-    // {
-    //     /** @var \App\Models\TwitchAccount $twitchAccount */
-    //     $twitchAccount = Auth::user()->twitch;
-
-    //     $this->twitchAccountId = $twitchAccount->account_id;
-    // }
 
     public function getListeners(): array
     {

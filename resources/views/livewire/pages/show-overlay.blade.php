@@ -35,12 +35,6 @@
         audio.play();
     });
 
-    // Echo.channel('events').listen('TwitchEventCreated', (e) => {
-    //     setTimeout(() => {
-    //         $wire.dispatch('audio-player-ended');
-    //     }, 5000);
-    // });
-
     $wire.on('audio-player-ended', () => {
         $wire.markAsPlayed();
     });
