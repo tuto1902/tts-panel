@@ -56,12 +56,12 @@ final class TwitchEventListener implements ShouldQueue
         if (! isset($data['data'][0]['display_name'], $data['data'][0]['profile_image_url'])) {
             throw new Exception('Missing twitch user information');
         }
-        TwitchEvent::create([
+        $twitchEvent = TwitchEvent::create([
             'message' => $event->message,
             'file_path' => $fileName,
             'nickname' => $data['data'][0]['display_name'],
             'avatar' => $data['data'][0]['profile_image_url'],
         ]);
-        broadcast(new TwitchEventCreated);
+        broadcast(new TwitchEventCreated($twitchEvent->id));
     }
 }
