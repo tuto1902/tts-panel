@@ -28,7 +28,7 @@ final class ShowTwitchEvents extends Component
     {
         return [
             // Private Channel
-            'echo-private:events,TwitchEventCreated' => 'onTwitchEventCreated',
+            'echo:events,TwitchEventCreated' => 'onTwitchEventCreated',
         ];
     }
 
