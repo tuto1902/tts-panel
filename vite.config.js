@@ -13,7 +13,7 @@ export default defineConfig({
     },
     build: {
         rollupOptions: {
-            external: ['animate.css']
+            external: ['/node_modules/animate.css/animate.css']
         }
     }
 });
