@@ -10,5 +10,10 @@ export default defineConfig({
     ],
     optimizeDeps: {
         include: ['animate.css']
+    },
+    build: {
+        rollupOptions: {
+            external: ['animate.css']
+        }
     }
 });
