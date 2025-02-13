@@ -36,7 +36,9 @@ final class TwitchEventSubscriptionForm extends Component
         ];
     }
 
+    // @codeCoverageIgnoreStart
     public function onTwitchAccountUpdated(): void {}
+    // @codeCoverageIgnoreEnd
 
     public function render(): View
     {

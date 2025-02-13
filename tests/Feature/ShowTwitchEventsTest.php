@@ -13,7 +13,6 @@ use function Pest\Laravel\withoutExceptionHandling;
 
 beforeEach(function (): void {
     $this->user = User::factory()->create();
-    // $this->account = TwitchAccount::factory()->for($this->user)->create();
 });
 
 it('renders successfully', function (): void {
@@ -41,4 +40,13 @@ it('contains the twitch event card component', function (): void {
     withoutExceptionHandling();
     actingAs($this->user)->get('/events')
         ->assertSeeLivewire(ShowTwitchEvents::class);
+});
+
+it('marks an event as played', function (): void {
+    $event = TwitchEvent::factory()->create()->fresh();
+
+    Livewire::actingAs($this->user)->test(ShowTwitchEvents::class)
+        ->call('markAsPlayed', $event);
+
+    expect($event->refresh())->played_at->not->toBeNull();
 });

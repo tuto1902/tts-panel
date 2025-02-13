@@ -77,3 +77,35 @@ it('updates the account status to pending after event subscription request', fun
         'status' => 'webhook_callback_verification_pending',
     ]);
 });
+
+it('throws an exception when the twitch request fails', function (): void {
+    Http::fake([
+        'https://id.twitch.tv/oauth2/token' => Http::response([
+            'access_token' => 'jostpf5q0uzmxmkba9iyug38kjtgh',
+        ]),
+        'https://api.twitch.tv/helix/eventsub/subscriptions' => Http::response([
+            'data' => [
+                ['status' => 'webhook_callback_verification_failed'],
+            ],
+        ], 400),
+    ]);
+
+    expect(function (): void {
+        Livewire::actingAs($this->user)
+            ->test(TwitchEventSubscriptionForm::class)
+            ->call('enableTwitchEventSubscription');
+
+    })->toThrow(Exception::class);
+});
+
+it('throws an exception when the twitch token request fails', function (): void {
+    Http::fake([
+        'https://id.twitch.tv/oauth2/token' => Http::response([], 400),
+    ]);
+
+    expect(function (): void {
+        Livewire::actingAs($this->user)
+            ->test(TwitchEventSubscriptionForm::class)
+            ->call('enableTwitchEventSubscription');
+    })->toThrow(Exception::class);
+});

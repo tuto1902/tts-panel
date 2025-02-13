@@ -69,7 +69,7 @@
         "lint": "pint",
         "refactor": "rector",
         "test:lint": "pint --test",
-        "test:unit": "pest --parallel",
+        "test:unit": "pest --parallel --coverage --exactly=90.4",
         "test:types": "phpstan analyse",
         "test:refactor": "rector --dry-run",
         "test:types-coverage": "pest --type-coverage --min=100",

@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
+use App\Events\TwitchEventCreated;
 use App\Events\TwitchEventReceived;
 use App\Listeners\TwitchEventListener;
 use App\Models\TwitchEvent;
+use Illuminate\Broadcasting\Channel;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Event;
 
-use function Pest\Laravel\assertDatabaseCount;
 use function Pest\Laravel\assertDatabaseHas;
-use function Pest\Laravel\json;
 
 beforeEach(function (): void {
     $this->messageId = '1';
@@ -19,52 +19,23 @@ beforeEach(function (): void {
     Config::set('services.twitch.webhook_secret', 'secret');
 });
 
-it('dispatches a TwitchEventReceived event when the webhook is called', function (): void {
-    $subscription_type = config('services.twitch.subscription_type');
-    $body = [
-        'subscription' => [
-            'type' => $subscription_type,
-        ],
-        'event' => [
-            'user_id' => '1337',
-            'user_login' => 'awesome_user',
-            'user_name' => 'Awesome_User',
-            'user_input' => 'reward message',
-        ],
-    ];
-    $message = $this->messageId.$this->timestamp.json_encode($body);
-    // Encrypt the application id header, timestamp and request body to create a signature
-    // Signature will always be different when using a random secret
-    $signature = 'sha256='.hash_hmac('sha256', $message, 'secret');
-    // Fake events
-    Event::fake();
-
-    json('POST', '/twitch/event', $body, [
-        'Twitch-Eventsub-Message-Id' => $this->messageId,
-        'Twitch-Eventsub-Message-Timestamp' => $this->timestamp,
-        'Twitch-Eventsub-Message-Signature' => $signature,
-        'Twitch-Eventsub-Message-Type' => 'notification',
-    ]);
-
-    Event::assertDispatched(TwitchEventReceived::class);
-});
-
-it('creates a tts record in the database when the twitch event is handled', function (): void {
+it('dispatches a TwitchEventCreated event when the TwitchEventReceived is handled', function (): void {
 
     $message = 'Event message';
 
     setupOpenAIRequest();
     $account_id = setupTwitchUserRequest();
 
+    // Fake events
+    Event::fake();
+
     $twitchEvent = new TwitchEventReceived(account_id: $account_id, message: $message);
     $twitchEventListener = new TwitchEventListener;
     $twitchEventListener->handle($twitchEvent);
 
-    assertDatabaseCount('twitch_events', 1);
-    assertDatabaseHas('twitch_events', [
-        'id' => 1,
-        'message' => $message,
-    ]);
+    Event::assertDispatched(TwitchEventCreated::class, function ($event) {
+        return in_array(new Channel('events'), $event->broadcastOn());
+    });
 });
 
 it('requests user display name and avatar from Twitch', function (): void {

@@ -21,7 +21,9 @@ final class ShowTwitchEvents extends Component
         ];
     }
 
+    // @codeCoverageIgnoreStart
     public function onTwitchEventCreated(): void {}
+    // @codeCoverageIgnoreEnd
 
     public function render(): View
     {
