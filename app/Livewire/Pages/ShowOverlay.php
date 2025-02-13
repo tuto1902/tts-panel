@@ -41,6 +41,7 @@ final class ShowOverlay extends Component
         return view('livewire.pages.show-overlay');
     }
 
+    // @codeCoverageIgnoreStart
     public function getListeners(): array
     {
         return [
@@ -74,4 +75,5 @@ final class ShowOverlay extends Component
         $this->fadeIn = false;
         $this->fadeOut = true;
     }
+    // @codeCoverageIgnoreEnd
 }

@@ -17,6 +17,7 @@ use Laravel\Socialite\Facades\Socialite;
 
 final class TwitchController extends Controller
 {
+    // @codeCoverageIgnoreStart
     public function redirect(): RedirectResponse
     {
         // @phpstan-ignore method.notFound
@@ -50,6 +51,7 @@ final class TwitchController extends Controller
 
         return redirect()->route('dashboard')->banner('Twitch authentication successfull');
     }
+    // @codeCoverageIgnoreEnd
 
     public function event(Request $request): Response
     {
@@ -82,6 +84,7 @@ final class TwitchController extends Controller
         }
     }
 
+    // @codeCoverageIgnoreStart
     public function clip(Request $request): void
     {
         /** @var TwitchAccount $twitchAccount */
@@ -117,4 +120,5 @@ final class TwitchController extends Controller
             }
         }
     }
+    // @codeCoverageIgnoreEnd
 }

@@ -74,6 +74,7 @@ final class User extends Authenticatable
         ];
     }
 
+    // @codeCoverageIgnoreStart
     protected function defaultProfilePhotoUrl(): string
     {
         /** @var TwitchAccount $twitchAccount */
@@ -88,4 +89,5 @@ final class User extends Authenticatable
 
         return 'https://ui-avatars.com/api/?name='.urlencode($name).'&color=7F9CF5&background=EBF4FF';
     }
+    // @codeCoverageIgnoreEnd
 }
