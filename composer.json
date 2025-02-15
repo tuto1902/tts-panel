@@ -1,6 +1,5 @@
 {
-    "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "$schema": "https://getcomposer.org/schema.json", "name": "laravel/laravel",
     "type": "project",
     "description": "The skeleton application for the Laravel framework.",
     "keywords": [
@@ -21,7 +20,6 @@
         "socialiteproviders/twitch": "^5.4"
     },
     "require-dev": {
-        "aaronfrancis/solo": "^0.3.1",
         "fakerphp/faker": "^1.23",
         "larastan/larastan": "^3.0",
         "laravel/pail": "^1.1",
@@ -33,7 +31,8 @@
         "pestphp/pest": "^3.7",
         "pestphp/pest-plugin-laravel": "^3.0",
         "pestphp/pest-plugin-type-coverage": "^3.2",
-        "rector/rector": "^2.0"
+        "rector/rector": "^2.0",
+        "soloterm/solo": "^0.3.1"
     },
     "autoload": {
         "psr-4": {
