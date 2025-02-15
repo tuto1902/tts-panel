@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Storage;
 final class TwitchEvent extends Model
 {
     /** @use HasFactory<\Database\Factories\TwitchEventFactory> */
-    use HasFactory, SoftDeletes, Prunable;
+    use HasFactory, Prunable, SoftDeletes;
 
     protected $fillable = [
         'message',
@@ -22,6 +22,14 @@ final class TwitchEvent extends Model
         'nickname',
         'avatar',
     ];
+
+    /**
+     * Get the prunable model query.
+     */
+    public function prunable(): Builder
+    {
+        return self::where('created_at', '<=', now()->subDay());
+    }
 
     /**
      * Get the attributes that should be cast.
@@ -33,14 +41,6 @@ final class TwitchEvent extends Model
         return [
             'played_at' => 'datetime',
         ];
-    }
-
-    /**
-     * Get the prunable model query.
-     */
-    public function prunable(): Builder
-    {
-        return static::where('created_at', '<=', now()->subDay());
     }
 
     /**
