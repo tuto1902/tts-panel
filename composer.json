@@ -21,6 +21,7 @@
         "socialiteproviders/twitch": "^5.4"
     },
     "require-dev": {
+        "aaronfrancis/solo": "^0.3.1",
         "fakerphp/faker": "^1.23",
         "larastan/larastan": "^3.0",
         "laravel/pail": "^1.1",

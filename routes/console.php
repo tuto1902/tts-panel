@@ -6,9 +6,12 @@ use App\Events\TwitchEventReceived;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Schedule;
 
 use function Laravel\Prompts\spin;
 use function Laravel\Prompts\table;
+
+Schedule::command('model:prune')->daily();
 
 Artisan::command('twitch:event', function (): void {
     $quote = Inspiring::quotes()->random();
