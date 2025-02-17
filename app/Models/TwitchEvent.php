@@ -48,7 +48,6 @@ final class TwitchEvent extends Model
      */
     protected function pruning(): void
     {
-        // dd($this->file_path);
         Storage::disk('public')->delete($this->file_path);
     }
 }
