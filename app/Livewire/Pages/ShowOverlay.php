@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire\Pages;
 
+use App\Events\TwitchEventMarkedAsPlayed;
 use App\Models\TwitchEvent;
 use Illuminate\Support\Carbon;
 use Illuminate\View\View;
@@ -62,6 +63,7 @@ final class ShowOverlay extends Component
         $this->event->played_at = Carbon::now();
         $this->event->save();
         $this->fadeOutCard();
+        broadcast(new TwitchEventMarkedAsPlayed());
     }
 
     public function fadeInCard(): void

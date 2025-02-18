@@ -24,9 +24,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 
     Route::get('/auth/callback', [TwitchController::class, 'callback'])->name('twitch.callback');
 
-    Route::get('/events', ShowTwitchEvents::class)->name('events.index');
+    Route::get('/events', ShowTwitchEvents::class)->name('events');
 
-    Route::get('/events/played', ShowPlayedTwitchEvents::class)->name('events.played.index');
+    Route::get('/events/played', ShowPlayedTwitchEvents::class)->name('events.played');
 
     Route::get('/clip', [TwitchController::class, 'clip']);
 });

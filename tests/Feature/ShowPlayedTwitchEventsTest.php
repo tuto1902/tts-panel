@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Livewire\Pages\ShowPlayedTwitchEvents;
 use App\Models\TwitchEvent;
-use Livewire\Livewire;
 use App\Models\User;
 use Illuminate\Support\Carbon;
+use Livewire\Livewire;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\withoutExceptionHandling;
@@ -13,7 +15,7 @@ beforeEach(function (): void {
     $this->user = User::factory()->create();
 });
 
-it('renders the component', function () {
+it('renders the component', function (): void {
     Livewire::test(ShowPlayedTwitchEvents::class)
         ->assertOk();
 });

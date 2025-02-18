@@ -1,15 +1,18 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Livewire\Pages;
 
 use App\Models\TwitchEvent;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\View\View;
 use Livewire\Attributes\Computed;
 use Livewire\Component;
 
-class ShowPlayedTwitchEvents extends Component
+final class ShowPlayedTwitchEvents extends Component
 {
-    public function render()
+    public function render(): View
     {
         return view('livewire.pages.show-played-twitch-events');
     }
