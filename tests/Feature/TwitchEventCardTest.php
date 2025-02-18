@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Livewire\TwitchEventCard;
 use App\Models\TwitchEvent;
 use App\Models\User;
+use Illuminate\Support\Carbon;
 use Livewire\Livewire;
 
 beforeEach(function (): void {
@@ -24,6 +25,13 @@ it('shows the event message', function (): void {
         ->assertSee($event->message)
         ->assertSee($event->nickname)
         ->assertSee($event->avatar);
+});
+
+it('hides the mark as played button when the event has been played already', function (): void {
+    $event = TwitchEvent::factory()->create(['played_at' => Carbon::now()]);
+
+    Livewire::actingAs($this->user)->test(TwitchEventCard::class, ['event' => $event])
+        ->assertDontSeeText('Mark As Played');
 });
 
 it('updates the event played at column', function (): void {

@@ -20,7 +20,9 @@
                     Your browser does not support the audio tag.
                 </audio>
             </div>
-            <x-button wire:click="$parent.markAsPlayed({{ $event->id }})">Mark as Played</x-button>
+            @if($event->played_at == null)
+            <x-button wire:click="$parent.markAsPlayed({{ $event->id }})">Mark As Played</x-button>
+            @endif
         </div>
     </div>
 </div>
