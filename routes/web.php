@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Http\Controllers\TwitchController;
 use App\Http\Middleware\TwitchValidationMiddleware;
 use App\Livewire\Pages\ShowOverlay;
+use App\Livewire\Pages\ShowPlayedTwitchEvents;
 use App\Livewire\Pages\ShowTwitchEvents;
 use Google\Cloud\TextToSpeech\V1\AudioConfig;
 use Google\Cloud\TextToSpeech\V1\AudioEncoding;
@@ -31,7 +32,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 
     Route::get('/auth/callback', [TwitchController::class, 'callback'])->name('twitch.callback');
 
-    Route::get('/events', ShowTwitchEvents::class)->name('events.index');
+    Route::get('/events', ShowTwitchEvents::class)->name('events');
+
+    Route::get('/events/played', ShowPlayedTwitchEvents::class)->name('events.played');
 
     Route::get('/clip', [TwitchController::class, 'clip']);
 

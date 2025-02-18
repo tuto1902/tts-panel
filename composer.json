@@ -70,7 +70,7 @@
         "lint": "pint",
         "refactor": "rector",
         "test:lint": "pint --test",
-        "test:unit": "pest --parallel --coverage --exactly=90.4",
+        "test:unit": "pest --parallel --coverage --min=90.8",
         "test:types": "phpstan analyse",
         "test:refactor": "rector --dry-run",
         "test:types-coverage": "pest --type-coverage --min=100",
