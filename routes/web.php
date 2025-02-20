@@ -38,7 +38,7 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 
     Route::get('/clip', [TwitchController::class, 'clip']);
 
-    Route::get('/google', function() {
+    Route::get('/google', function (): void {
         $textToSpeechClient = new TextToSpeechClient();
         $input = new SynthesisInput();
         $input->setText('This is my first test using Google Text To Speech service. Hooray!');
