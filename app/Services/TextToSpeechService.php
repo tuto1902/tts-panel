@@ -17,15 +17,17 @@ use Illuminate\Support\Facades\Storage;
 
 final class TextToSpeechService
 {
-    private SynthesizeService $synthesizeService;
+    public SynthesizeService $synthesizeService;
 
-    public function synthesize($message, $fileName): void
+    public function synthesize(string $message, string $fileName): void
     {
+        // @codeCoverageIgnoreStart
         match ($this->synthesizeService) {
             SynthesizeService::Google => $this->googleSynthesize($message, $fileName),
             SynthesizeService::OpenAI => $this->openAISynthesize($message, $fileName),
             default => $this->googleSynthesize($message, $fileName)
         };
+        // @codeCoverageIgnoreEnd
     }
 
     public function service(SynthesizeService $service): self
@@ -35,7 +37,7 @@ final class TextToSpeechService
         return $this;
     }
 
-    private function googleSynthesize($message, $fileName): void
+    public function googleSynthesize(string $message, string $fileName): void
     {
         $textToSpeechClient = new TextToSpeechClient();
         $input = new SynthesisInput();
@@ -54,13 +56,15 @@ final class TextToSpeechService
         Storage::disk('public')->put($fileName, $response->getAudioContent());
     }
 
-    private function openAISynthesize($message, $fileName)
+    public function openAISynthesize(string $message, string $fileName): void
     {
+        // @codeCoverageIgnoreStart
         Http::sink(public_path('/storage/'.$fileName))->withToken(config('services.openai.secret'))
             ->post('https://api.openai.com/v1/audio/speech', [
                 'model' => 'tts-1',
                 'input' => $message,
                 'voice' => 'alloy',
             ]);
+        // @codeCoverageIgnoreEnd
     }
 }

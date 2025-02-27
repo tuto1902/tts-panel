@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Http;
 
 final class TwitchService
 {
-    public function getUser($accountId): array
+    public function getUser(int $accountId): array
     {
         // Request the user information
         $accessToken = $this->getAccessToken();
