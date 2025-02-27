@@ -29,7 +29,6 @@
     });
 
     $wire.on('play-audio', (event) => {
-        console.log(event.file_path);
         audio.pause();
         audio.src = '/storage/'+ event.file_path + '?ts=' + Date.now();
         audio.play();
