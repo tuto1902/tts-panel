@@ -35,6 +35,8 @@ final class TwitchEventListener implements ShouldQueue
 
         $twitchUser = Twitch::getUser($event->account_id);
 
+        $twitchUserColor = Twitch::getUserColor($event->account_id);
+
         if (! $twitchUser['display_name'] || ! $twitchUser['profile_image_url']) {
             throw new Exception('Missing twitch user information');
         }
@@ -44,6 +46,7 @@ final class TwitchEventListener implements ShouldQueue
             'file_path' => $fileName,
             'nickname' => $twitchUser['display_name'],
             'avatar' => $twitchUser['profile_image_url'],
+            'color' => $twitchUserColor
         ]);
 
         broadcast(new TwitchEventCreated($twitchEvent->id));

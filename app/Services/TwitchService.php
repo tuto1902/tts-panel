@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 final class TwitchService
 {
@@ -25,6 +26,21 @@ final class TwitchService
             'display_name' => $response['data'][0]['display_name'],
             'profile_image_url' => $response['data'][0]['profile_image_url'],
         ];
+    }
+
+    public function getUserColor(int $accountId): string
+    {
+        $accessToken = $this->getAccessToken();
+        $response = Http::withToken($accessToken)
+            ->withHeaders([
+                'Client-Id' => config('services.twitch.client_id'),
+                'Content-Type' => 'application/json',
+            ])
+            ->get("https://api.twitch.tv/helix/chat/color?user_id={$accountId}");
+
+        $response = $response->json();
+
+        return $response['data'][0]['color'];
     }
 
     private function getAccessToken(): string
