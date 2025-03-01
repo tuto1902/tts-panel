@@ -21,6 +21,7 @@ final class TwitchEvent extends Model
         'file_path',
         'nickname',
         'avatar',
+        'color',
     ];
 
     /**
