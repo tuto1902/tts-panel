@@ -31,7 +31,7 @@ final class TwitchEventListener implements ShouldQueue
     {
         $fileName = Str::uuid()->toString().'.mp3';
 
-        TextToSpeech::service(SynthesizeService::Google)->synthesize($event->message, $fileName);
+        TextToSpeech::synthesize($event->message, SynthesizeService::Google, $fileName);
 
         $twitchUser = Twitch::getUser($event->account_id);
 
