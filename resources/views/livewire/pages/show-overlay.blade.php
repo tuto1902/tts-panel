@@ -10,7 +10,7 @@
         <div class="flex justify-start items-center gap-6">
             <img class="size-16 rounded-full object-cover" src="{{ $event?->avatar }}" alt="{{ $event?->nickname }}" />
 
-            <h1 class="mt-8 text-2xl font-medium text-gray-900 dark:text-white">
+            <h1 class="mt-8 text-2xl font-extrabold text-gray-900 dark:text-white" style="color: {{ $event->color }}!important">
                 {{ $event?->nickname }}
             </h1>
         </div>
