@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 use App\Models\TwitchAccount;
 use App\Models\User;
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Storage;
 
 /*
 |--------------------------------------------------------------------------

@@ -15,26 +15,14 @@ use Google\Cloud\TextToSpeech\V1\VoiceSelectionParams;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 
-final class TextToSpeechService
+class TextToSpeechService
 {
-    public SynthesizeService $synthesizeService;
-
-    public function synthesize(string $message, string $fileName): void
+    public function synthesize(string $message, SynthesizeService $service, string $fileName): void
     {
-        // @codeCoverageIgnoreStart
-        match ($this->synthesizeService) {
+        match ($service) {
             SynthesizeService::Google => $this->googleSynthesize($message, $fileName),
             SynthesizeService::OpenAI => $this->openAISynthesize($message, $fileName),
-            default => $this->googleSynthesize($message, $fileName)
         };
-        // @codeCoverageIgnoreEnd
-    }
-
-    public function service(SynthesizeService $service): self
-    {
-        $this->synthesizeService = $service;
-
-        return $this;
     }
 
     public function googleSynthesize(string $message, string $fileName): void

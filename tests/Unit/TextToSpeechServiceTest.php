@@ -4,17 +4,33 @@ declare(strict_types=1);
 
 use App\Enums\SynthesizeService;
 use App\Services\TextToSpeechService;
+use Illuminate\Support\Facades\Storage;
 
-it('calls the TextToSpeech::service method when TwitchEventListener is handled', function (): void {
-    $service = new TextToSpeechService(); // Create a real instance
+it('uses the Google synthesize service', function (): void {
 
-    $reflection = new ReflectionProperty(TextToSpeechService::class, 'synthesizeService');
-    $reflection->setAccessible(true);
-    $reflection->setValue($service, SynthesizeService::Google);
+    $mock = Mockery::mock(TextToSpeechService::class)->makePartial();
 
-    $mock = Mockery::mock($service)->makePartial();
-    $mock->shouldReceive('synthesize')->once()->with('Hello', 'output.mp3');
+    $mock->shouldReceive('googleSynthesize')->once();
 
-    $mock->synthesize('Hello', 'output.mp3');
+    Storage::fake();
+
+    /**
+     * @var TextToSpeechService $mock
+     */
+    $mock->synthesize('Hello', SynthesizeService::Google, 'output.mp3');
+
+});
+
+it('uses the OpenAI synthesize service', function (): void {
+
+    $mock = Mockery::mock(TextToSpeechService::class)->makePartial();
+    $mock->shouldReceive('openAISynthesize')->once();
+
+    Storage::fake();
+
+    /**
+     * @var TextToSpeechService $mock
+     */
+    $mock->synthesize('Hello', SynthesizeService::OpenAI, 'output.mp3');
 
 });
