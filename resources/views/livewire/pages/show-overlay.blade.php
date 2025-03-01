@@ -1,6 +1,6 @@
 <div
     @class([
-        'bg-white dark:bg-gray-800 overflow-hidden shadow-xl border-2 dark:border-gray-700 sm:rounded-lg min-w-[40%] mb-6 ml-6',
+        'bg-white dark:bg-gray-800 overflow-hidden shadow-xl border-2 dark:border-gray-700 sm:rounded-lg min-w-[40%] mb-6 ml-6 max-w-4xl',
         'hidden' => !$fadeIn && !$fadeOut,
         'animate__animated animate__jackInTheBox' => $fadeIn,
         'animate__animated animate__fadeOutDown' => $fadeOut
