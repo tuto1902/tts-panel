@@ -31,7 +31,7 @@ final class TwitchAccountUpdated implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('accounts.updated'),
+            new Channel('accounts.updated'),
         ];
     }
 }
