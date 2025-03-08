@@ -15,10 +15,7 @@
     <div class="bg-gray-200 dark:bg-gray-800 bg-opacity-25 p-6 lg:p-8">
         <div class="flex items-center justify-center">
             <div class="flex-1">
-                <audio controls>
-                    <source src="/storage/{{ $event->file_path }}" type="audio/mpeg">
-                    Your browser does not support the audio tag.
-                </audio>
+                <x-button wire:click="playAudio">Play</x-button>
             </div>
             @if($event->played_at == null)
             <x-button wire:click="$parent.markAsPlayed({{ $event->id }})">Mark As Played</x-button>
@@ -26,3 +23,23 @@
         </div>
     </div>
 </div>
+@script
+<script>
+    let audio = new Audio();
+
+    audio.addEventListener('ended', () => {
+        $wire.dispatch('audio-ended');
+    });
+
+    $wire.on('play-audio', (event) => {
+        audio.pause();
+        // Change this to a base64 string
+        audio.src = `data:audio/mpeg;base64,${event.base64Audio}`;
+        audio.play();
+    });
+
+    $wire.on('stop-audio', () => {
+        audio.pause();
+    })
+</script>
+@endscript

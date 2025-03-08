@@ -30,7 +30,7 @@
 
     $wire.on('play-audio', (event) => {
         audio.pause();
-        audio.src = '/storage/'+ event.file_path + '?ts=' + Date.now();
+        audio.src = `data:audio/mpeg;base64,${event.base64Audio}`;
         audio.play();
     });
 

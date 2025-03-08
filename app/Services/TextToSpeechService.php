@@ -17,15 +17,19 @@ use Illuminate\Support\Facades\Storage;
 
 class TextToSpeechService
 {
-    public function synthesize(string $message, SynthesizeService $service, string $fileName): void
+    public function synthesize(string $message, SynthesizeService $service): string
     {
-        match ($service) {
-            SynthesizeService::Google => $this->googleSynthesize($message, $fileName),
-            SynthesizeService::OpenAI => $this->openAISynthesize($message, $fileName),
-        };
+        switch ($service) {
+            case SynthesizeService::Google:
+                return $this->googleSynthesize($message);
+            case SynthesizeService::OpenAI:
+                return $this->openAISynthesize($message);
+            default:
+                return $this->googleSynthesize($message);
+        }
     }
 
-    public function googleSynthesize(string $message, string $fileName): void
+    public function googleSynthesize(string $message): string
     {
         $textToSpeechClient = new TextToSpeechClient();
         $input = new SynthesisInput();
@@ -41,18 +45,20 @@ class TextToSpeechService
         $request->setVoice($voice);
         $request->setAudioConfig($audioConfig);
         $response = $textToSpeechClient->synthesizeSpeech($request);
-        Storage::disk('public')->put($fileName, $response->getAudioContent());
+        return base64_encode($response->getAudioContent());
     }
 
-    public function openAISynthesize(string $message, string $fileName): void
+    public function openAISynthesize(string $message): string
     {
         // @codeCoverageIgnoreStart
-        Http::sink(public_path('/storage/'.$fileName))->withToken(config('services.openai.secret'))
+        $response = Http::withToken(config('services.openai.secret'))
             ->post('https://api.openai.com/v1/audio/speech', [
                 'model' => 'tts-1',
                 'input' => $message,
                 'voice' => 'alloy',
             ]);
+
+        return base64_encode($response->body());
         // @codeCoverageIgnoreEnd
     }
 }

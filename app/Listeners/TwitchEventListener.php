@@ -31,8 +31,6 @@ final class TwitchEventListener implements ShouldQueue
     {
         $fileName = Str::uuid()->toString().'.mp3';
 
-        TextToSpeech::synthesize($event->message, SynthesizeService::Google, $fileName);
-
         $twitchUser = Twitch::getUser($event->account_id);
 
         $twitchUserColor = Twitch::getUserColor($event->account_id);
@@ -43,7 +41,6 @@ final class TwitchEventListener implements ShouldQueue
 
         $twitchEvent = TwitchEvent::create([
             'message' => $event->message,
-            'file_path' => $fileName,
             'nickname' => $twitchUser['display_name'],
             'avatar' => $twitchUser['profile_image_url'],
             'color' => $twitchUserColor

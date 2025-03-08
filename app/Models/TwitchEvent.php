@@ -43,12 +43,4 @@ final class TwitchEvent extends Model
             'played_at' => 'datetime',
         ];
     }
-
-    /**
-     * Prepare the model for pruning.
-     */
-    protected function pruning(): void
-    {
-        Storage::disk('public')->delete($this->file_path);
-    }
 }

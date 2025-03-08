@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Livewire\Pages;
 
+use App\Enums\SynthesizeService;
 use App\Events\TwitchEventMarkedAsPlayed;
+use App\Facades\TextToSpeech;
 use App\Models\TwitchEvent;
 use Illuminate\Support\Carbon;
 use Illuminate\View\View;
@@ -54,7 +56,8 @@ final class ShowOverlay extends Component
     {
         $this->event_id = $payload['event_id'];
         $this->event = TwitchEvent::find($this->event_id);
-        $this->dispatch('play-audio', file_path: $this->event->file_path);
+        $base64Audio = TextToSpeech::synthesize($this->event->message, SynthesizeService::Google);
+        $this->dispatch('play-audio', base64Audio: $base64Audio);
         $this->fadeInCard();
     }
 
