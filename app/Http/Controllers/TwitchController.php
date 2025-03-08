@@ -22,7 +22,7 @@ final class TwitchController extends Controller
     {
         // @phpstan-ignore method.notFound
         return Socialite::driver('twitch')
-            ->scopes(['channel:read:redemptions', 'clips:edit'])
+            ->scopes(['channel:read:redemptions', 'clips:edit', 'moderator:read:followers'])
             ->redirect();
     }
 

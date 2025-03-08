@@ -31,8 +31,7 @@ final class TwitchEventSubscriptionForm extends Component
     public function getListeners(): array
     {
         return [
-            // Private Channel
-            'echo-private:account.updated,TwitchAccountUpdated' => 'onTwitchAccountUpdated',
+            'echo:account.updated,TwitchAccountUpdated' => 'onTwitchAccountUpdated',
         ];
     }
 
@@ -68,6 +67,19 @@ final class TwitchEventSubscriptionForm extends Component
             throw new Exception('event subscription failed: '.$response->body());
         }
 
+        $payload = $this->getRequestPayload('follow');
+
+        $response = Http::withToken($accessToken)
+            ->withHeaders([
+                'Client-Id' => config('services.twitch.client_id'),
+                'Content-Type' => 'application/json',
+            ])
+            ->post('https://api.twitch.tv/helix/eventsub/subscriptions', $payload);
+
+        if ($response->failed()) {
+            throw new Exception('event subscription failed: '.$response->body());
+        }
+
         Auth::user()->twitch()->update([
             'status' => $response->json('data')[0]['status'],
         ]);
@@ -90,23 +102,46 @@ final class TwitchEventSubscriptionForm extends Component
         return $response->json('access_token');
     }
 
-    protected function getRequestPayload(): array
+    protected function getRequestPayload($type = 'reward'): array
     {
         /** @var \App\Models\TwitchAccount $twitchAccount */
         $twitchAccount = Auth::user()->twitch;
 
-        return [
-            'type' => 'channel.channel_points_custom_reward_redemption.add',
-            'version' => '1',
-            'condition' => [
-                'broadcaster_user_id' => $twitchAccount->account_id,
-                'reward_id' => config('services.twitch.reward_id'),
-            ],
-            'transport' => [
-                'method' => 'webhook',
-                'callback' => config('app.url').route('twitch.event', absolute: false),
-                'secret' => config('services.twitch.webhook_secret'),
-            ],
-        ];
+        switch ($type) {
+            case 'reward':
+                # code...
+                    return [
+                        'type' => 'channel.channel_points_custom_reward_redemption.add',
+                        'version' => '1',
+                        'condition' => [
+                            'broadcaster_user_id' => $twitchAccount->account_id,
+                            'reward_id' => config('services.twitch.reward_id'),
+                        ],
+                        'transport' => [
+                            'method' => 'webhook',
+                            'callback' => config('app.url').route('twitch.event', absolute: false),
+                            'secret' => config('services.twitch.webhook_secret'),
+                        ],
+                    ];
+                break;
+
+            default:
+                # code...
+                    return [
+                        'type' => 'channel.follow',
+                        'version' => '2',
+                        'condition' => [
+                            'broadcaster_user_id' => $twitchAccount->account_id,
+                            'moderator_user_id' => $twitchAccount->account_id,
+                        ],
+                        'transport' => [
+                            'method' => 'webhook',
+                            'callback' => config('app.url').route('twitch.event', absolute: false),
+                            'secret' => config('services.twitch.webhook_secret'),
+                        ],
+                    ];
+                break;
+        }
+
     }
 }
