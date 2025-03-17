@@ -29,8 +29,6 @@ final class TwitchEventListener implements ShouldQueue
      */
     public function handle(TwitchEventReceived $event): void
     {
-        $fileName = Str::uuid()->toString().'.mp3';
-
         $twitchUser = Twitch::getUser($event->account_id);
 
         $twitchUserColor = Twitch::getUserColor($event->account_id);
@@ -39,11 +37,16 @@ final class TwitchEventListener implements ShouldQueue
             throw new Exception('Missing twitch user information');
         }
 
+        if ($event->type == 'follow') {
+            $event->message = $twitchUser['display_name'] . ' ' . $event->message;
+        }
+
         $twitchEvent = TwitchEvent::create([
             'message' => $event->message,
             'nickname' => $twitchUser['display_name'],
             'avatar' => $twitchUser['profile_image_url'],
-            'color' => $twitchUserColor
+            'color' => $twitchUserColor,
+            'type' => $event->type
         ]);
 
         broadcast(new TwitchEventCreated($twitchEvent->id));

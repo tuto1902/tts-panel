@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Enraging;
 use App\Events\TwitchEventReceived;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
@@ -17,7 +18,14 @@ Artisan::command('twitch:event', function (): void {
     $quote = Inspiring::quotes()->random();
 
     broadcast(
-        new TwitchEventReceived(account_id: 57648209, message: $quote)
+        new TwitchEventReceived(account_id: 57648209, message: $quote, type: 'reward')
+    );
+});
+
+Artisan::command('twitch:follow', function (): void {
+    $quote = Enraging::quote();
+    broadcast(
+        new TwitchEventReceived(account_id: 57648209, message: $quote, type: 'follow')
     );
 });
 

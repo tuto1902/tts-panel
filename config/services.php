@@ -42,7 +42,7 @@ return [
         'client_secret' => env('TWITCH_CLIENT_SECRET'),
         'redirect' => env('TWITCH_REDIRECT_URI'),
         'reward_id' => '944e2f9e-3937-4f96-abfe-8ad37374a823',
-        'subscription_type' => 'channel.channel_points_custom_reward_redemption.add',
+        'subscription_types' => ['channel.channel_points_custom_reward_redemption.add', 'channel.follow'],
         'webhook_secret' => 's3rcr370001',
         'overlay_secret' => env('TWITCH_OVERLAY_SECRET', 'secret'),
     ],
