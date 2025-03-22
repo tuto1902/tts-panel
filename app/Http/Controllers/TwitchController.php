@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
+use App\Enraging;
 use App\Events\TwitchAccountUpdated;
 use App\Events\TwitchEventReceived;
 use App\Models\TwitchAccount;
@@ -70,13 +71,24 @@ final class TwitchController extends Controller
 
                 return response($challenge, 200, ['Content-Type' => 'text/plain']);
             case 'notification':
-                if ($request->subscription['type'] !== config('services.twitch.subscription_type')) {
+                if (! in_array($request->subscription['type'], config('services.twitch.subscription_types'))) {
                     return response('Invalid notification type', 400);
                 }
-                $message = $request->get('event')['user_input'];
-                $accountId = (int) $request->get('event')['user_id'];
 
-                event(new TwitchEventReceived(account_id: $accountId, message: $message));
+                $accountId = (int) $request->get('event')['user_id'];
+                $eventType = null;
+                $message = '';
+
+                if ($request->subscription['type'] == 'channel.channel_points_custom_reward_redemption.add') {
+                    $message = $request->get('event')['user_input'];
+                    $eventType = 'reward';
+                } else {
+                    $eventType = 'follow';
+                    // Set the random message
+                    $message = Enraging::quote();
+                }
+
+                event(new TwitchEventReceived(account_id: $accountId, message: $message, type: $eventType));
 
                 return response(null, 204);
             default:
@@ -119,6 +131,37 @@ final class TwitchController extends Controller
                     ]);
             }
         }
+    }
+
+    public function token()
+    {
+        $accessToken = Auth::user()->twitch->access_token;
+
+        return ['accessToken' => $accessToken];
+    }
+
+    public function refresh()
+    {
+        $twitchAccount = Auth::user()->twitch;
+        // Refresh the access token
+        $payload = [
+            'client_id' => config('services.twitch.client_id'),
+            'client_secret' => config('services.twitch.client_secret'),
+            'grant_type' => 'refresh_token',
+            'refresh_token' => $twitchAccount->refresh_token,
+        ];
+        $response = Http::asForm()->post('https://id.twitch.tv/oauth2/token', $payload);
+
+        if ($response->successful()) {
+            $twitchAccount->access_token = $response->json('access_token');
+            $twitchAccount->refresh_token = $response->json('refresh_token');
+            $twitchAccount->save();
+
+            return ['accessToken' => $twitchAccount->accessToken];
+        } else {
+            abort(500, 'Could not refresh access token');
+        }
+
     }
     // @codeCoverageIgnoreEnd
 }

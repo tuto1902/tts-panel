@@ -20,6 +20,6 @@ final class ShowPlayedTwitchEvents extends Component
     #[Computed]
     public function events(): Collection
     {
-        return TwitchEvent::whereNotNull('played_at')->latest()->get();
+        return TwitchEvent::whereNotNull('played_at')->where('type', 'reward')->latest()->get();
     }
 }

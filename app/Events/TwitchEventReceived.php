@@ -17,6 +17,7 @@ final class TwitchEventReceived
      */
     public function __construct(
         public string $message,
-        public int $account_id
+        public int $account_id,
+        public string $type
     ) {}
 }
