@@ -23,9 +23,9 @@ Artisan::command('twitch:event', function (): void {
 });
 
 Artisan::command('twitch:follow', function (): void {
-    $quote = Enraging::quote();
+    $message = ' just followed';
     broadcast(
-        new TwitchEventReceived(account_id: 57648209, message: $quote, type: 'follow')
+        new TwitchEventReceived(account_id: 57648209, message: $message, type: 'follow')
     );
 });
 

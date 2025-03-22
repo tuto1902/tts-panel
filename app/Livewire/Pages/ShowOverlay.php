@@ -48,8 +48,7 @@ final class ShowOverlay extends Component
     {
         $this->event_id = $payload['event_id'];
         $this->event = TwitchEvent::find($this->event_id);
-        $base64Audio = TextToSpeech::synthesize($this->event->message, SynthesizeService::Google);
-        $this->dispatch('play-audio', base64Audio: $base64Audio);
+        $this->dispatch('play-audio');
         $this->fadeInCard();
     }
 
@@ -85,14 +84,18 @@ final class ShowOverlay extends Component
 
         if ($event['payload']['subscription']['type'] == 'channel.channel_points_custom_reward_redemption.add') {
             $message = $event['payload']['event']['user_input'];
-            $eventType = 'reward';
-        } else {
-            $eventType = 'follow';
-            // Set the random message
-            $message = Enraging::quote();
         }
 
-        event(new TwitchEventReceived(account_id: $accountId, message: $message, type: $eventType));
+        event(new TwitchEventReceived(account_id: $accountId, message: $message, type: 'reward'));
+    }
+
+
+    public function handleFollowEvent($event)
+    {
+        $accountId = (int) $event['payload']['event']['user_id'];
+        $message = $event['payload']['event']['user_name'] . ' just followed!';
+
+        event(new TwitchEventReceived(account_id: $accountId, message: $message, type: 'follow'));
     }
     // @codeCoverageIgnoreEnd
 }
