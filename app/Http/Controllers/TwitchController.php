@@ -132,5 +132,36 @@ final class TwitchController extends Controller
             }
         }
     }
+
+    public function token()
+    {
+        $accessToken = Auth::user()->twitch->access_token;
+
+        return ['accessToken' => $accessToken];
+    }
+
+    public function refresh()
+    {
+        $twitchAccount = Auth::user()->twitch;
+        // Refresh the access token
+        $payload = [
+            'client_id' => config('services.twitch.client_id'),
+            'client_secret' => config('services.twitch.client_secret'),
+            'grant_type' => 'refresh_token',
+            'refresh_token' => $twitchAccount->refresh_token,
+        ];
+        $response = Http::asForm()->post('https://id.twitch.tv/oauth2/token', $payload);
+
+        if ($response->successful()) {
+            $twitchAccount->access_token = $response->json('access_token');
+            $twitchAccount->refresh_token = $response->json('refresh_token');
+            $twitchAccount->save();
+
+            return ['accessToken' => $twitchAccount->accessToken];
+        } else {
+            abort(500, 'Could not refresh access token');
+        }
+
+    }
     // @codeCoverageIgnoreEnd
 }

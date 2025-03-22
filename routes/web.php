@@ -38,23 +38,9 @@ Route::middleware(['auth:sanctum', config('jetstream.auth_session'), 'verified']
 
     Route::get('/clip', [TwitchController::class, 'clip']);
 
-    Route::get('/google', function (): void {
-        $textToSpeechClient = new TextToSpeechClient();
-        $input = new SynthesisInput();
-        $input->setText('This is my first test using Google Text To Speech service. Hooray!');
-        $voice = new VoiceSelectionParams();
-        $voice->setLanguageCode('en-GB');
-        $voice->setName('en-GB-Studio-B');
-        $voice->setSsmlGender(SsmlVoiceGender::MALE);
-        $audioConfig = new AudioConfig();
-        $audioConfig->setAudioEncoding(AudioEncoding::MP3);
-        $request = new SynthesizeSpeechRequest();
-        $request->setInput($input);
-        $request->setVoice($voice);
-        $request->setAudioConfig($audioConfig);
-        $response = $textToSpeechClient->synthesizeSpeech($request);
-        Storage::disk('public')->put('google-test.mp3', $response->getAudioContent());
-    });
-});
+    Route::get('/overlay', ShowOverlay::class);
 
-Route::get('/overlay', ShowOverlay::class);
+    Route::get('/auth/token', [TwitchController::class, 'token']);
+
+    Route::get('/auth/token/refresh', [TwitchController::class, 'refresh']);
+});
