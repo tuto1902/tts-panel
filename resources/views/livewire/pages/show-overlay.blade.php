@@ -95,7 +95,7 @@
                 // Refresh token and retry
                 console.log('Re-attempt subscription...');
                 await refreshAccessToken();
-                let response = await attemptSubscription();
+                let response = await attemptRewardSubscription();
                 console.log('🎉 Subscribed to Channel Point Redemptions:', response.data);
                 response = await attemptFollowSubscription();
                 console.log('🎉 Subscribed to New Follower Events:', response.data);
