@@ -61,12 +61,12 @@
 
             if (message.metadata?.message_type === 'session_welcome') {
                 sessionId = message.payload.session.id;
-                console.log(`📡 Session ID: ${sessionId}`);
+                console.log('📡 Session ID received');
                 await subscribeToRewards();
             }
 
             if (message.metadata?.message_type === 'notification') {
-                console.log('📡 Websocket Notification:', message);
+                console.log('📡 Websocket Notification Received');
                 if (message.metadata?.subscription_type == 'channel.channel_points_custom_reward_redemption.add') {
                     handleRewardRedemption(message);
                 } else if (message.metadata?.subscription_type == 'channel.follow') {
@@ -86,9 +86,9 @@
     async function subscribeToRewards() {
         try {
             let response = await attemptRewardSubscription();
-            console.log('🎉 Subscribed to Channel Point Redemptions:', response.data);
+            console.log('🎉 Subscribed to Channel Point Redemptions');
             response = await attemptFollowSubscription();
-            console.log('🎉 Subscribed to New Follower Events:', response.data);
+            console.log('🎉 Subscribed to New Follower Events');
         } catch (error) {
             console.error('❌ Subscription Error:', error.response?.data || error.message);
             if (error.response?.data.status == 401) {
@@ -96,20 +96,20 @@
                 console.log('Re-attempt subscription...');
                 await refreshAccessToken();
                 let response = await attemptRewardSubscription();
-                console.log('🎉 Subscribed to Channel Point Redemptions:', response.data);
+                console.log('🎉 Subscribed to Channel Point Redemptions');
                 response = await attemptFollowSubscription();
-                console.log('🎉 Subscribed to New Follower Events:', response.data);
+                console.log('🎉 Subscribed to New Follower Events');
             }
         }
     }
 
     function handleRewardRedemption(message) {
-        console.log(`🎊 ${message.payload.event.user_name} redeemed: ${message.payload.event.reward.title}`, event);
+        console.log(`🎊 ${message.payload.event.user_name} redeemed: ${message.payload.event.reward.title}`);
         $wire.handleRewardEvent(message);
     }
 
     function handleFollowEvent(message) {
-        console.log(`🎊 ${message.payload.event.user_name} just followed`, event);
+        console.log(`🎊 ${message.payload.event.user_name} just followed`);
         $wire.handleFollowEvent(message);
     }
 
@@ -150,23 +150,11 @@
             }
         );
     }
-    let audio = new Audio();
 
-    audio.addEventListener('ended', () => {
-        $wire.dispatch('audio-player-ended');
-    });
-
-    $wire.on('play-audio', (event) => {
-        // audio.pause();
-        // audio.src = `data:audio/mpeg;base64,${event.base64Audio}`;
-        // audio.play();
+    $wire.on('fadeout-timer', (event) => {
         setTimeout(() => {
-            $wire.markAsPlayed();
+            $wire.fadeOutCard();
         }, 10000);
-    });
-
-    $wire.on('audio-player-ended', () => {
-        $wire.markAsPlayed();
     });
 
     // Start the bot when the page loads

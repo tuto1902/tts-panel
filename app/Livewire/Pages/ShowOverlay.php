@@ -48,16 +48,8 @@ final class ShowOverlay extends Component
     {
         $this->event_id = $payload['event_id'];
         $this->event = TwitchEvent::find($this->event_id);
-        $this->dispatch('play-audio');
+        $this->dispatch('fadeout-timer');
         $this->fadeInCard();
-    }
-
-    public function markAsPlayed(): void
-    {
-        $this->event->played_at = Carbon::now();
-        $this->event->save();
-        $this->fadeOutCard();
-        broadcast(new TwitchEventMarkedAsPlayed());
     }
 
     public function fadeInCard(): void
