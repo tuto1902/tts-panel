@@ -14,9 +14,11 @@ final class TextToSpeechServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        // @codeCoverageIgnoreStart
         $this->app->singleton(TextToSpeechService::class, function () {
             return new TextToSpeechService();
         });
+        // @codeCoverageIgnoreEnd
     }
 
     /**

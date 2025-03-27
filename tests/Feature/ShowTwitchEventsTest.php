@@ -21,15 +21,15 @@ it('renders successfully', function (): void {
 });
 
 it('shows all twitch event records', function (): void {
-    TwitchEvent::factory(3)->create();
+    TwitchEvent::factory(3)->state(['type' => 'reward'])->create();
 
     Livewire::actingAs($this->user)->test(ShowTwitchEvents::class)
         ->assertCount('events', 3);
 });
 
 it('only shows events that have not being played', function (): void {
-    TwitchEvent::factory(3)->create();
-    TwitchEvent::factory()->state(['played_at' => Carbon::now()])->create();
+    TwitchEvent::factory(3)->state(['type' => 'reward'])->create();
+    TwitchEvent::factory()->state(['type' => 'reward', 'played_at' => Carbon::now()])->create();
 
     Livewire::actingAs($this->user)->test(ShowTwitchEvents::class)
         ->assertCount('events', 3);

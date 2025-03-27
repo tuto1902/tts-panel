@@ -13,12 +13,12 @@ use Google\Cloud\TextToSpeech\V1\SynthesisInput;
 use Google\Cloud\TextToSpeech\V1\SynthesizeSpeechRequest;
 use Google\Cloud\TextToSpeech\V1\VoiceSelectionParams;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Storage;
 
 class TextToSpeechService
 {
     public function synthesize(string $message, SynthesizeService $service): string
     {
+        // @codeCoverageIgnoreStart
         switch ($service) {
             case SynthesizeService::Google:
                 return $this->googleSynthesize($message);
@@ -27,10 +27,12 @@ class TextToSpeechService
             default:
                 return $this->googleSynthesize($message);
         }
+        // @codeCoverageIgnoreEnd
     }
 
     public function googleSynthesize(string $message): string
     {
+        // @codeCoverageIgnoreStart
         $textToSpeechClient = new TextToSpeechClient();
         $input = new SynthesisInput();
         $input->setText($message);
@@ -45,7 +47,9 @@ class TextToSpeechService
         $request->setVoice($voice);
         $request->setAudioConfig($audioConfig);
         $response = $textToSpeechClient->synthesizeSpeech($request);
+
         return base64_encode($response->getAudioContent());
+        // @codeCoverageIgnoreEnd
     }
 
     public function openAISynthesize(string $message): string

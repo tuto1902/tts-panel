@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace App\Livewire;
 
-use App\Enums\SynthesizeService;
-use App\Facades\TextToSpeech;
 use App\Models\TwitchEvent;
 use Illuminate\Support\Carbon;
 use Illuminate\View\View;
@@ -26,11 +24,5 @@ final class TwitchEventCard extends Component
         $event = $this->event;
         $event->played_at = Carbon::now()->format('Y-m-d H:i:s');
         $event->save();
-    }
-
-    public function playAudio()
-    {
-        $base64Audio = TextToSpeech::synthesize($this->event->message, SynthesizeService::Google);
-        $this->dispatch('play-audio', base64Audio: $base64Audio);
     }
 }

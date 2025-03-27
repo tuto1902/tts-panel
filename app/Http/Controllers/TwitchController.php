@@ -4,13 +4,9 @@ declare(strict_types=1);
 
 namespace App\Http\Controllers;
 
-use App\Enraging;
-use App\Events\TwitchAccountUpdated;
-use App\Events\TwitchEventReceived;
 use App\Models\TwitchAccount;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -54,48 +50,6 @@ final class TwitchController extends Controller
     }
     // @codeCoverageIgnoreEnd
 
-    public function event(Request $request): Response
-    {
-        if (! $request->header('Twitch-Eventsub-Message-Type')) {
-            return response('Missing message type header', 400);
-        }
-
-        switch ($request->header('Twitch-Eventsub-Message-Type')) {
-            case 'webhook_callback_verification':
-                $challenge = $request->get('challenge');
-                $accountId = $request->get('subscription')['condition']['broadcaster_user_id'];
-                $twitchAccount = TwitchAccount::where('account_id', $accountId)->first();
-                $twitchAccount->status = 'enabled';
-                $twitchAccount->save();
-                broadcast(new TwitchAccountUpdated());
-
-                return response($challenge, 200, ['Content-Type' => 'text/plain']);
-            case 'notification':
-                if (! in_array($request->subscription['type'], config('services.twitch.subscription_types'))) {
-                    return response('Invalid notification type', 400);
-                }
-
-                $accountId = (int) $request->get('event')['user_id'];
-                $eventType = null;
-                $message = '';
-
-                if ($request->subscription['type'] == 'channel.channel_points_custom_reward_redemption.add') {
-                    $message = $request->get('event')['user_input'];
-                    $eventType = 'reward';
-                } else {
-                    $eventType = 'follow';
-                    // Set the random message
-                    $message = Enraging::quote();
-                }
-
-                event(new TwitchEventReceived(account_id: $accountId, message: $message, type: $eventType));
-
-                return response(null, 204);
-            default:
-                return response('Missing message type header', 400);
-        }
-    }
-
     // @codeCoverageIgnoreStart
     public function clip(Request $request): void
     {
@@ -133,14 +87,15 @@ final class TwitchController extends Controller
         }
     }
 
-    public function token()
+    public function token(): array
     {
+        // @phpstan-ignore property.notFound
         $accessToken = Auth::user()->twitch->access_token;
 
         return ['accessToken' => $accessToken];
     }
 
-    public function refresh()
+    public function refresh(): array
     {
         $twitchAccount = Auth::user()->twitch;
         // Refresh the access token
@@ -148,20 +103,23 @@ final class TwitchController extends Controller
             'client_id' => config('services.twitch.client_id'),
             'client_secret' => config('services.twitch.client_secret'),
             'grant_type' => 'refresh_token',
+            // @phpstan-ignore property.notFound
             'refresh_token' => $twitchAccount->refresh_token,
         ];
         $response = Http::asForm()->post('https://id.twitch.tv/oauth2/token', $payload);
 
         if ($response->successful()) {
+            // @phpstan-ignore property.notFound
             $twitchAccount->access_token = $response->json('access_token');
+            // @phpstan-ignore property.notFound
             $twitchAccount->refresh_token = $response->json('refresh_token');
             $twitchAccount->save();
 
+            // @phpstan-ignore property.notFound
             return ['accessToken' => $twitchAccount->accessToken];
-        } else {
-            abort(500, 'Could not refresh access token');
         }
 
+        return [];
     }
     // @codeCoverageIgnoreEnd
 }

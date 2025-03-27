@@ -4,16 +4,10 @@ declare(strict_types=1);
 
 namespace App\Livewire\Pages;
 
-use App\Enraging;
-use App\Enums\SynthesizeService;
-use App\Events\TwitchEventMarkedAsPlayed;
 use App\Events\TwitchEventReceived;
-use App\Facades\TextToSpeech;
 use App\Models\TwitchEvent;
-use Illuminate\Support\Carbon;
 use Illuminate\View\View;
 use Livewire\Attributes\Layout;
-use Livewire\Attributes\Url;
 use Livewire\Component;
 
 #[Layout('layouts.overlay')]
@@ -64,28 +58,24 @@ final class ShowOverlay extends Component
         $this->fadeOut = true;
     }
 
-    public function handleRewardEvent($event)
+    public function handleRewardEvent(array $event): void
     {
-        if (! in_array($event['payload']['subscription']['type'], config('services.twitch.subscription_types'))) {
-            return response('Invalid notification type', 400);
+        if (in_array($event['payload']['subscription']['type'], config('services.twitch.subscription_types'))) {
+
+            $accountId = (int) $event['payload']['event']['user_id'];
+            $message = '';
+
+            if ($event['payload']['subscription']['type'] === 'channel.channel_points_custom_reward_redemption.add') {
+                $message = $event['payload']['event']['user_input'];
+            }
+            event(new TwitchEventReceived(account_id: $accountId, message: $message, type: 'reward'));
         }
-
-        $accountId = (int) $event['payload']['event']['user_id'];
-        $eventType = null;
-        $message = '';
-
-        if ($event['payload']['subscription']['type'] == 'channel.channel_points_custom_reward_redemption.add') {
-            $message = $event['payload']['event']['user_input'];
-        }
-
-        event(new TwitchEventReceived(account_id: $accountId, message: $message, type: 'reward'));
     }
 
-
-    public function handleFollowEvent($event)
+    public function handleFollowEvent(array $event): void
     {
         $accountId = (int) $event['payload']['event']['user_id'];
-        $message = $event['payload']['event']['user_name'] . ' just followed!';
+        $message = $event['payload']['event']['user_name'].' just followed!';
 
         event(new TwitchEventReceived(account_id: $accountId, message: $message, type: 'follow'));
     }

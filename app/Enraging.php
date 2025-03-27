@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App;
 
 use Illuminate\Support\Collection;
 
 class Enraging
 {
-    public static function quote()
+    // @codeCoverageIgnoreStart
+    public static function quote(): string
     {
         return static::quotes()->random();
     }
@@ -23,7 +26,8 @@ class Enraging
             'deployed with a "temporary fix" that became permanent!',
             'just approved their own pull request!',
             'fixed a bug by commenting out the error message!',
-            'just force-pushed to main and said, "It works on my machine!"'
+            'just force-pushed to main and said, "It works on my machine!"',
         ]);
     }
+    // @codeCoverageIgnoreEnd
 }

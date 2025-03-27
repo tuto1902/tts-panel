@@ -75,6 +75,7 @@ function setupTwitchUserRequest(): int
             [
                 'display_name' => 'TwitchUser',
                 'profile_image_url' => 'profile_image.png',
+                'color' => '#ffffff',
             ],
         ],
     ];
