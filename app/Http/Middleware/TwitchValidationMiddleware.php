@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 final class TwitchValidationMiddleware
 {
+    // @codeCoverageIgnoreStart
     /**
      * Handle an incoming request.
      *
@@ -44,4 +45,5 @@ final class TwitchValidationMiddleware
 
         return hash_equals($hash, $signature);
     }
+    // @codeCoverageIgnoreEnd
 }

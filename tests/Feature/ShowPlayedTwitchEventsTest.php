@@ -21,22 +21,22 @@ it('renders the component', function (): void {
 });
 
 it('shows all played twitch event records', function (): void {
-    TwitchEvent::factory(3)->create(['played_at' => Carbon::now()]);
+    TwitchEvent::factory(3)->create(['type' => 'reward', 'played_at' => Carbon::now()]);
 
     Livewire::actingAs($this->user)->test(ShowPlayedTwitchEvents::class)
         ->assertCount('events', 3);
 });
 
 it('only shows events that have being played', function (): void {
-    TwitchEvent::factory(3)->create(['played_at' => Carbon::now()]);
-    TwitchEvent::factory()->create();
+    TwitchEvent::factory(3)->create(['type' => 'reward', 'played_at' => Carbon::now()]);
+    TwitchEvent::factory()->create(['type' => 'reward']);
 
     Livewire::actingAs($this->user)->test(ShowPlayedTwitchEvents::class)
         ->assertCount('events', 3);
 });
 
 it('contains the twitch event card component', function (): void {
-    TwitchEvent::factory(3)->create();
+    TwitchEvent::factory(3)->create(['type' => 'reward']);
     withoutExceptionHandling();
     actingAs($this->user)->get('/events/played')
         ->assertSeeLivewire(ShowPlayedTwitchEvents::class);

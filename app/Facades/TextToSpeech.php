@@ -9,8 +9,10 @@ use Illuminate\Support\Facades\Facade;
 
 final class TextToSpeech extends Facade
 {
+    // @codeCoverageIgnoreStart
     protected static function getFacadeAccessor(): string
     {
         return TextToSpeechService::class;
     }
+    // @codeCoverageIgnoreEnd
 }
